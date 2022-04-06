@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+  function startTimer(duration, display) {
+      display.textContent = duration;
+      if (duration < 1) {
+	  location.replace('{{ redirect_url }}');
+	}
+      else {
+	  setTimeout(function() {
+	      startTimer(duration -1, display);
+	    },  1000);
+	}
+    }
+
+  window.onload = function () {
+      display = document.querySelector('#time');
+      startTimer({{ sleep_seconds }}, display);
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="py-3 text-center container">
+  <div class="row py-lg-3">
+    <div class="col-lg-6 col-md-8 mx-auto">
+      {% if redirect_url.startswith("https://glveneer.com/ecommerce") %}
+      <p>GL Veneer's website does not allow us to link directly to the slab you selected so we are redirecting you to their overall listings page in <span id="time">{{ sleep_seconds }}</span> seconds.</p>
+      <p>You can contact GL Veneer directly at 800.588.5003 or <a href="{{ slab.mailto_href }}"${:,.2f}".format(slab.price) }}. Could you please tell me more about this slab?">Sales@GLVeneer.com</a> for details.</p>
+      <a id="email-gl-redirect" class="button btn btn-sm btn-primary" href="{{ slab.mailto_href }}" target="_blank">Email {{ slab.name }}</a>
+      <a id="goto-gl-redirect" class="button btn btn-sm btn-secondary" href="{{ redirect_url }}">Go to their website now</a>
+      {% else %}
+      <p>Redirecting you to the slab vendor's site in <span id="time">{{ sleep_seconds }}</span> seconds. This message will not display again.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

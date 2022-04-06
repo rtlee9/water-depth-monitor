@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Slabrador live edge wood slab finder">
+    <meta name="author" content="Ryan Lee">
+
+    <meta property="og:title" content="Slabrador live edge slab finder">
+    <meta property="og:image" content="https://slabrador.com/static/colored-aged-wood-horizontal.jpg">
+    <meta property="og:description" content="Slabrador is the world's largest online collection of live edge wood slabs.">
+    <meta property="og:url" content="https://slabrador.com">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <title>Slabrador live edge slab finder</title>
+    <link href="static/css/all.css" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="static/icon.svg" sizes="any">
+    <link rel="canonical" href="https://slabrador.com">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script type="text/javascript">
+      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+      heap.load("64874319");
+    </script>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-78320750-16">
+      </script>
+      <script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'UA-78320750-16');
+      </script>
+    {% endblock %}
+  </head>
+
+  <body>
+    <header>
+      <div class="collapse bg-dark" id="navbarHeader">
+	<div class="container">
+	  <div class="row">
+	    <div class="col-sm-8 col-md-7 py-4">
+	      <h4 class="text-white">About</h4>
+	      <p class="text-muted">Slabrador is the world's largest online collection of live edge wood slabs. We gather information on high-quality slabs from reputable vendors across the world for you to find the perfect slab. Slabrador is a project brought to you by <a href="https://livelylumber.com/" target="_blank">Lively Lumber LLC</a>.</p>
+	    </div>
+	    <div class="col-sm-4 offset-md-1 py-4">
+	      <h4 class="text-white">Contact</h4>
+	      <ul class="list-unstyled">
+		<li><a href="mailto:ryan@livelylumber.com" class="text-white" target="_blank"><i class="fas fa-envelope"></i> Email us</a></li>
+		<li><a href="https://www.instagram.com/livelylumber/" class="text-white" target="_blank"><i class="fab fa-instagram"></i> Follow on Instagram</a></li>
+		<li><a href="https://www.facebook.com/LivelyLumber/" class="text-white" target="_blank"><i class="fab fa-facebook-square"></i> Like on Facebook</a></li>
+	      </ul>
+	    </div>
+	  </div>
+	</div>
+      </div>
+      <div class="navbar navbar-dark bg-dark shadow-sm">
+	<div class="container">
+	  <a href="/" class="navbar-brand d-flex align-items-center">
+	    <img src="static/icon.svg"/ height="30" style="padding-right:5px;">
+	    <strong>Slabrador</strong>
+	  </a>
+	  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	</div>
+      </div>
+    </header>
+
+    <main>
+      {% block content %}
+      {% endblock %}
+    </main>
+
+    <footer class="text-muted py-5">
+      {% block footer %}
+      <div class="container">
+	<p class="float-end mb-1">
+	<a href="#">Back to top</a>
+	</p>
+	<p class="mb-0">Brought to you by <a href="https://livelylumber.com/" target="_blank">Lively Lumber LLC</a></p>
+      </div>
+      {% endblock %}
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+  </body>
+</html>
+
