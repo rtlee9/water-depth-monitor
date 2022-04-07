@@ -25,8 +25,8 @@ from typing import List, Set
 from collections import namedtuple
 from dateutil import tz
 
-time_zone = tz.gettz('America/Los_Angeles')
-SensorReading = namedtuple('SensorReading', ['time', 'depth'])
+time_zone = tz.gettz("America/Los_Angeles")
+SensorReading = namedtuple("SensorReading", ["time", "depth"])
 
 load_dotenv()
 
@@ -37,7 +37,7 @@ table = dynamodb.Table("water_tank_sensor")
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z'
 app.config["FLASK_ENV"] = environ.get("FLASK_ENV", default="production")
-app.config['SESSION_TYPE'] = 'filesystem'
+app.config["SESSION_TYPE"] = "filesystem"
 # app.config["SESSION_TYPE"] = "redis"
 # app.config["SESSION_REDIS"] = r
 Session(app)
@@ -47,34 +47,39 @@ done = False
 start_key = None
 while not done:
     if start_key:
-        scan_kwargs['ExclusiveStartKey'] = start_key
+        scan_kwargs["ExclusiveStartKey"] = start_key
     response = table.scan()
-    data_raw = response.get('Items', [])
+    data_raw = response.get("Items", [])
     app.logger.debug(f"Fetched {len(data_raw)} items from AWS DynamoDB")
     for item in data_raw:
-        unix_time = int(item['sample_time'] / 1000)
+        unix_time = int(item["sample_time"] / 1000)
         reading = SensorReading(
             datetime.fromtimestamp(unix_time, tz=time_zone),
-            float(item['device_data']['sensor_depth_in']),
+            float(item["device_data"]["sensor_depth_in"]),
         )
         data.append(reading)
-    start_key = response.get('LastEvaluatedKey', None)
+    start_key = response.get("LastEvaluatedKey", None)
     done = start_key is None
 app.logger.info(f"Fetched {len(data)} items from AWS DynamoDB")
 
 # sort by time
 df = pd.DataFrame(data).sort_values("time")
 df.time = pd.to_datetime(df.time)
-df.set_index('time', inplace=True)
+df.set_index("time", inplace=True)
+
 
 def toDate(dateString):
     return datetime.strptime(dateString, "%Y-%m-%d").date()
 
+
 class SlabForm(FlaskForm):
     start_time = DateField(validators=[Optional()])
-    end_time = DateField(validators=[DateRange(max=datetime.today().date()), Optional()])
+    end_time = DateField(
+        validators=[DateRange(max=datetime.today().date()), Optional()]
+    )
     granularity = StringField("Granularity")
     submit = SubmitField("Submit")
+
 
 @app.route("/", methods=["GET", "POST"])
 @app.route("/index", methods=["GET", "POST"])
@@ -118,8 +123,10 @@ def index():
     # process data
     df_filtered = df.copy()
     if start_time:
-        df_filtered = df_filtered[pd.to_datetime(df_filtered.index.to_series()).dt.date >= start_time]
-    df_hourly = df_filtered.resample(granularity if granularity else 'H').mean()
+        df_filtered = df_filtered[
+            pd.to_datetime(df_filtered.index.to_series()).dt.date >= start_time
+        ]
+    df_hourly = df_filtered.resample(granularity if granularity else "H").mean()
 
     # parse args
     return render_template(
