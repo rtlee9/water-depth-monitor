@@ -127,6 +127,10 @@ def index():
         df_filtered = df_filtered[
             df_filtered.index.to_series() >= start_time.replace(tzinfo=time_zone)
         ]
+    if end_time:
+        df_filtered = df_filtered[
+            df_filtered.index.to_series() <= end_time.replace(tzinfo=time_zone)
+        ]
     df_hourly = df_filtered.resample(granularity if granularity else "H").mean()
 
     # parse args
