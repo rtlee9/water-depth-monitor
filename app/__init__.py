@@ -131,14 +131,24 @@ def index():
         df_filtered = df_filtered[
             df_filtered.index.to_series() <= end_time.replace(tzinfo=time_zone)
         ]
-    df_hourly = df_filtered.resample(granularity if granularity else "H").mean()
+    granularity = granularity if granularity else "H"
+    df_agg = df_filtered.resample(granularity).mean()
+    if granularity.lower().endswith("h"):
+        time_unit = "hour"
+    elif granularity.lower().endswith("min") or granularity.lower().endswith("t"):
+        time_unit = "minute"
+    elif granularity.lower().endswith("d"):
+        time_unit = "day"
+    else:
+        time_unit = "hour"
 
     # parse args
     return render_template(
         "index.html",
         data=data,
-        values=df_hourly.depth,
-        labels=df_hourly.index,
-        legend="Water depth",
+        values=df_agg.depth,
+        labels=df_agg.index,
+        legend="Water depth (inches)",
         form=form,
+        unit=time_unit,
     )
