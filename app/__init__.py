@@ -12,7 +12,7 @@ from wtforms import (
 from wtforms.validators import (
     Optional,
 )
-from wtforms_components import DateRange, DateField, DateTimeField
+from wtforms_components import DateRange, DateTimeLocalField
 from flask_session import Session
 from dotenv import load_dotenv
 import redis
@@ -69,13 +69,14 @@ df.set_index("time", inplace=True)
 
 
 def toDate(dateString):
-    return datetime.strptime(dateString, "%Y-%m-%d").date()
+    return datetime.strptime(dateString, "%Y-%m-%d %H:%M:%S")
 
 
 class SlabForm(FlaskForm):
-    start_time = DateField(validators=[Optional()])
-    end_time = DateField(
-        validators=[DateRange(max=datetime.today().date()), Optional()]
+    start_time = DateTimeLocalField(validators=[Optional()], format="%Y-%m-%dT%H:%M")
+    end_time = DateTimeLocalField(
+        validators=[DateRange(max=datetime.today()), Optional()],
+        format="%Y-%m-%dT%H:%M",
     )
     granularity = StringField("Granularity")
     submit = SubmitField("Submit")
@@ -124,7 +125,7 @@ def index():
     df_filtered = df.copy()
     if start_time:
         df_filtered = df_filtered[
-            pd.to_datetime(df_filtered.index.to_series()).dt.date >= start_time
+            df_filtered.index.to_series() >= start_time.replace(tzinfo=time_zone)
         ]
     df_hourly = df_filtered.resample(granularity if granularity else "H").mean()
 

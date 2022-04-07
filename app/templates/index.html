@@ -88,7 +88,7 @@
 	  <div class="container">
 	    <div class="row justify-content-md-center">
 
-	      <div class="col-md-3")>
+	      <div class="col-md-2")>
 		{{ form.granularity.label }}:
 		{{ form.granularity(class='form-control', placeholder='30min, 1d') }}
 		{% for error in form.granularity.errors %}
@@ -96,17 +96,17 @@
 		{% endfor %}
 	      </div>
 
-	      <div class="col-md-3")>
+	      <div class="col-md-5")>
 		{{ form.start_time.label }}:
-		{{ form.start_time(class='datepicker') }}
+		{{ form.start_time(type='datetime-local') }}
 		{% for error in form.start_time.errors %}
 		<span style="color: red;">[{{ error }}]</span>
 		{% endfor %}
 	      </div>
 
-	      <div class="col-md-3")>
+	      <div class="col-md-5")>
 		{{ form.end_time.label }}:
-		{{ form.end_time(class='datepicker') }}
+		{{ form.end_time(type='datetime-local') }}
 		{% for error in form.end_time.errors %}
 		<span style="color: red;">[{{ error }}]</span>
 		{% endfor %}
