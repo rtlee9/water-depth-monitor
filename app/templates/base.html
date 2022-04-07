@@ -4,19 +4,16 @@
     {% block head %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Slabrador live edge wood slab finder">
+    <meta name="description" content="Water level meter dashboard">
     <meta name="author" content="Ryan Lee">
 
-    <meta property="og:title" content="Slabrador live edge slab finder">
-    <meta property="og:image" content="https://slabrador.com/static/colored-aged-wood-horizontal.jpg">
-    <meta property="og:description" content="Slabrador is the world's largest online collection of live edge wood slabs.">
-    <meta property="og:url" content="https://slabrador.com">
+    <meta property="og:title" content="Water level meter dashboard">
+    <meta property="og:description" content="A dashboard to monitor and anlyze water level meter readings">
     <meta name="twitter:card" content="summary_large_image">
 
-    <title>Slabrador live edge slab finder</title>
+    <title>Water level meter dashboard</title>
     <link href="static/css/all.css" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="static/icon.svg" sizes="any">
-    <link rel="canonical" href="https://slabrador.com">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script type="text/javascript">
@@ -41,15 +38,7 @@
 	  <div class="row">
 	    <div class="col-sm-8 col-md-7 py-4">
 	      <h4 class="text-white">About</h4>
-	      <p class="text-muted">Slabrador is the world's largest online collection of live edge wood slabs. We gather information on high-quality slabs from reputable vendors across the world for you to find the perfect slab. Slabrador is a project brought to you by <a href="https://livelylumber.com/" target="_blank">Lively Lumber LLC</a>.</p>
-	    </div>
-	    <div class="col-sm-4 offset-md-1 py-4">
-	      <h4 class="text-white">Contact</h4>
-	      <ul class="list-unstyled">
-		<li><a href="mailto:ryan@livelylumber.com" class="text-white" target="_blank"><i class="fas fa-envelope"></i> Email us</a></li>
-		<li><a href="https://www.instagram.com/livelylumber/" class="text-white" target="_blank"><i class="fab fa-instagram"></i> Follow on Instagram</a></li>
-		<li><a href="https://www.facebook.com/LivelyLumber/" class="text-white" target="_blank"><i class="fab fa-facebook-square"></i> Like on Facebook</a></li>
-	      </ul>
+	      <p class="text-muted">This is an open source project to monitor water depth meter readings streamed to AWS IOT and stored in DynamoDB.</p>
 	    </div>
 	  </div>
 	</div>
@@ -57,8 +46,7 @@
       <div class="navbar navbar-dark bg-dark shadow-sm">
 	<div class="container">
 	  <a href="/" class="navbar-brand d-flex align-items-center">
-	    <img src="static/icon.svg"/ height="30" style="padding-right:5px;">
-	    <strong>Slabrador</strong>
+	    <strong>Water level monitor</strong>
 	  </a>
 	  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
@@ -78,7 +66,7 @@
 	<p class="float-end mb-1">
 	<a href="#">Back to top</a>
 	</p>
-	<p class="mb-0">Brought to you by <a href="https://livelylumber.com/" target="_blank">Lively Lumber LLC</a></p>
+	<p class="mb-0">Brought to you by <a href="https://ryanlee.site/" target="_blank">Ryan Lee</a></p>
       </div>
       {% endblock %}
     </footer>
