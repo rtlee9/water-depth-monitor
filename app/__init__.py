@@ -154,12 +154,13 @@ def index():
     df_agg = df_filtered.resample(granularity).mean()
 
     # set x-axis time units
-    if granularity.lower().endswith("h"):
-        time_unit = "hour"
-    elif granularity.lower().endswith("min") or granularity.lower().endswith("t"):
-        time_unit = "minute"
-    elif granularity.lower().endswith("d"):
+    time_delta = df_filtered.index.max() - df_filtered.index.min()
+    if time_delta.days > 3:
         time_unit = "day"
+    elif time_delta.seconds > 60 * 60 * 2:
+        time_unit = "hour"
+    elif time_delta.seconds > 60 * 5:
+        time_unit = "minute"
     else:
         time_unit = "hour"
 
