@@ -6,8 +6,9 @@ import boto3
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import (
-    StringField,
+    SelectField,
     SubmitField,
+    IntegerField,
 )
 from wtforms.validators import (
     Optional,
@@ -72,13 +73,21 @@ def toDate(dateString):
     return datetime.strptime(dateString, "%Y-%m-%d %H:%M:%S")
 
 
+# map human readable units to resample units
+# https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.resample.html
+granularity_unit_map = {"minutes": "min", "hours": "h", "days": "d"}
+
+
 class SlabForm(FlaskForm):
     start_time = DateTimeLocalField(validators=[Optional()], format="%Y-%m-%dT%H:%M")
     end_time = DateTimeLocalField(
         validators=[DateRange(max=datetime.today()), Optional()],
         format="%Y-%m-%dT%H:%M",
     )
-    granularity = StringField("Granularity")
+    granularity_quantity = IntegerField("Granularity quantity")
+    granularity_unit = SelectField(
+        "Granularity units", choices=granularity_unit_map.keys()
+    )
     submit = SubmitField("Submit")
 
 
@@ -86,12 +95,14 @@ class SlabForm(FlaskForm):
 @app.route("/index", methods=["GET", "POST"])
 def index():
 
-    granularity = request.args.get("granularity", type=str)
+    granularity_quantity = request.args.get("granularity_quantity", type=int)
+    granularity_unit = request.args.get("granularity_unit", type=str)
     end_time = request.args.get("end_time", type=toDate)
     start_time = request.args.get("start_time", type=toDate)
 
     filters = dict(
-        granularity=granularity,
+        granularity_quantity=granularity_quantity,
+        granularity_unit=granularity_unit,
         end_time=end_time,
         start_time=start_time,
     )
@@ -131,8 +142,18 @@ def index():
         df_filtered = df_filtered[
             df_filtered.index.to_series() <= end_time.replace(tzinfo=time_zone)
         ]
-    granularity = granularity if granularity else "H"
+
+    # set default granularity
+    granularity_quantity = granularity_quantity if granularity_quantity else 1
+    granularity_unit = (
+        granularity_unit_map[granularity_unit] if granularity_unit else "h"
+    )
+
+    # resample data to desired granularity
+    granularity = str(granularity_quantity) + granularity_unit
     df_agg = df_filtered.resample(granularity).mean()
+
+    # set x-axis time units
     if granularity.lower().endswith("h"):
         time_unit = "hour"
     elif granularity.lower().endswith("min") or granularity.lower().endswith("t"):

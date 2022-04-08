@@ -60,14 +60,25 @@
 	  <div class="container">
 	    <div class="row justify-content-md-center">
 
-	      <div class="col-md-2")>
-		{{ form.granularity.label }}:
-		{{ form.granularity(class='form-control', placeholder='30min, 1d') }}
-		{% for error in form.granularity.errors %}
+	    <div class="row justify-content-md-center">
+	      <div class="col-md-4")>
+		{{ form.granularity_quantity.label }}:
+		{{ form.granularity_quantity(class='form-control', placeholder=1) }}
+		{% for error in form.granularity_quantity.errors %}
 		<span style="color: red;">[{{ error }}]</span>
 		{% endfor %}
 	      </div>
 
+	      <div class="col-md-5")>
+		{{ form.granularity_unit.label }}:
+		{{ form.granularity_unit(class='form-control', placeholder='min') }}
+		{% for error in form.granularity_unit.errors %}
+		<span style="color: red;">[{{ error }}]</span>
+		{% endfor %}
+	      </div>
+	      </div>
+
+	    <div class="row justify-content-md-center" style="margin-top: 5">
 	      <div class="col-md-5")>
 		{{ form.start_time.label }}:
 		{{ form.start_time(type='datetime-local') }}
@@ -82,6 +93,7 @@
 		{% for error in form.end_time.errors %}
 		<span style="color: red;">[{{ error }}]</span>
 		{% endfor %}
+	      </div>
 	      </div>
 
 	    </div>
