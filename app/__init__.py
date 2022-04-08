@@ -145,9 +145,10 @@ def index():
 
     # set default granularity
     granularity_quantity = granularity_quantity if granularity_quantity else 1
-    granularity_unit = (
-        granularity_unit_map[granularity_unit] if granularity_unit else "h"
-    )
+    granularity_unit_key = granularity_unit if granularity_unit else "hours"
+    granularity_unit = granularity_unit_map[granularity_unit_key]
+    form["granularity_quantity"].data = granularity_quantity
+    form["granularity_unit"].data = granularity_unit_key
 
     # resample data to desired granularity
     granularity = str(granularity_quantity) + granularity_unit
