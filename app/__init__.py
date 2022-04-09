@@ -164,6 +164,7 @@ def index():
     # resample data to desired granularity
     granularity = str(granularity_quantity) + granularity_unit
     df_agg = df_filtered.resample(granularity).mean()
+    df_agg = df_agg.dropna()
 
     # set x-axis time units
     time_delta = df_filtered.index.max() - df_filtered.index.min()
