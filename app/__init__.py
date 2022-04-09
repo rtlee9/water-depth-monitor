@@ -5,11 +5,7 @@ from random import shuffle
 import boto3
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_wtf import FlaskForm
-from wtforms import (
-    SelectField,
-    SubmitField,
-    IntegerField,
-)
+from wtforms import SelectField, SubmitField, IntegerField, BooleanField
 from wtforms.validators import (
     Optional,
 )
@@ -43,30 +39,35 @@ app.config["SESSION_TYPE"] = "filesystem"
 # app.config["SESSION_REDIS"] = r
 Session(app)
 
-data = []
-done = False
-start_key = None
-while not done:
-    if start_key:
-        scan_kwargs["ExclusiveStartKey"] = start_key
-    response = table.scan()
-    data_raw = response.get("Items", [])
-    app.logger.debug(f"Fetched {len(data_raw)} items from AWS DynamoDB")
-    for item in data_raw:
-        unix_time = int(item["sample_time"] / 1000)
-        reading = SensorReading(
-            datetime.fromtimestamp(unix_time, tz=time_zone),
-            float(item["device_data"]["sensor_depth_in"]),
-        )
-        data.append(reading)
-    start_key = response.get("LastEvaluatedKey", None)
-    done = start_key is None
-app.logger.info(f"Fetched {len(data)} items from AWS DynamoDB")
 
-# sort by time
-df = pd.DataFrame(data).sort_values("time")
-df.time = pd.to_datetime(df.time)
-df.set_index("time", inplace=True)
+def fetch_data():
+    data = []
+    done = False
+    start_key = None
+    while not done:
+        if start_key:
+            scan_kwargs["ExclusiveStartKey"] = start_key
+        response = table.scan()
+        data_raw = response.get("Items", [])
+        for item in data_raw:
+            unix_time = int(item["sample_time"] / 1000)
+            reading = SensorReading(
+                datetime.fromtimestamp(unix_time, tz=time_zone),
+                float(item["device_data"]["sensor_depth_in"]),
+            )
+            data.append(reading)
+        start_key = response.get("LastEvaluatedKey", None)
+        done = start_key is None
+    app.logger.info(f"Fetched {len(data)} items from AWS DynamoDB")
+
+    # sort by time
+    df = pd.DataFrame(data).sort_values("time")
+    df.time = pd.to_datetime(df.time)
+    df.set_index("time", inplace=True)
+    return df
+
+
+df = fetch_data()
 
 
 def toDate(dateString):
@@ -88,23 +89,27 @@ class SlabForm(FlaskForm):
     granularity_unit = SelectField(
         "Granularity units", choices=granularity_unit_map.keys()
     )
+    refresh = BooleanField("Refresh data")
     submit = SubmitField("Submit")
 
 
 @app.route("/", methods=["GET", "POST"])
 @app.route("/index", methods=["GET", "POST"])
 def index():
+    global df
 
     granularity_quantity = request.args.get("granularity_quantity", type=int)
     granularity_unit = request.args.get("granularity_unit", type=str)
     end_time = request.args.get("end_time", type=toDate)
     start_time = request.args.get("start_time", type=toDate)
+    refresh = request.args.get("refresh", type=bool)
 
     filters = dict(
         granularity_quantity=granularity_quantity,
         granularity_unit=granularity_unit,
         end_time=end_time,
         start_time=start_time,
+        refresh=refresh,
     )
     # app.logger.info(f"Received filter request: {json.dumps(filters)}")
     has_filters = any([value is not None for value in filters.values()])
@@ -130,7 +135,13 @@ def index():
 
     # pre-populate form
     for field in filters.keys():
+        if field == "refresh":  # don't wan't refresh bool to persist every time
+            break
         form[field].data = filters[field]
+
+    # handle refresh
+    if refresh:
+        df = fetch_data()
 
     # process data
     df_filtered = df.copy()
@@ -168,7 +179,6 @@ def index():
     # parse args
     return render_template(
         "index.html",
-        data=data,
         values=df_agg.depth,
         labels=df_agg.index,
         legend="Water depth (inches)",
